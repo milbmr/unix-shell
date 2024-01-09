@@ -5,12 +5,13 @@ int execution(char **args) {
   pid_t pid, wpid;
 
   pid = fork();
-
   if (pid == 0) {
-    execvp(args[0], args);
+    if (execvp(args[0], args) == -1) {
+      return 0;
+    }
   } else {
     wpid = waitpid(pid, NULL, WUNTRACED);
   }
 
-  return 0;
+  return 1;
 }

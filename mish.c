@@ -1,27 +1,10 @@
+#include "read_line.h"
+#include "split_line.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
-
-ssize_t read_line(char **line, FILE *file, char **cmd) {
-  size_t len = 0;
-  ssize_t read = 0;
-  char *c = NULL;
-  char *args[10];
-
-  read = getline(line, &len, file);
-  if (read == -1) {
-    return -1;
-  }
-
-  char *copy = *line;
-  c = strsep(&copy, " ");
-  *cmd = c;
-  printf("%p read line\n", c);
-
-  return 0;
-}
 
 void batch_mode(char *path) {
   char *line = NULL;
@@ -34,16 +17,7 @@ void batch_mode(char *path) {
     return;
   }
 
-  while ((error = read_line(&line, file, &cmd)) != -1) {
-    int thread = fork();
-
-    printf("%p main\n", cmd);
-    if (thread == 0) {
-      char *myargs[] = {"mish", NULL};
-      execv(cmd, myargs);
-    } else {
-      thread = wait(NULL);
-    }
+  while ((error = read_line(&line, file)) != -1) {
   }
 
   if (file != NULL)
@@ -56,25 +30,6 @@ void interactive_mode() {
   char *line = NULL;
   char *cmd = NULL;
   ssize_t p;
-
-  while (1) {
-    printf("wish >");
-
-    ssize_t read = read_line(&line, stdin, &cmd);
-
-    if ((p = strcmp(line, "path")) == 0) {
-    }
-
-    int thread = fork();
-
-    printf("%p main\n", cmd);
-    if (thread == 0) {
-      char *myargs[] = {"mish", NULL};
-      execv(cmd, myargs);
-    } else {
-      thread = wait(NULL);
-    }
-  }
 
   free(line);
 }
