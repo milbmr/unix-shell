@@ -7,22 +7,12 @@
 #include <unistd.h>
 
 void batch_mode(char *path) {
-  char *line = NULL;
-  ssize_t error = 0;
-  char *cmd = NULL;
   FILE *file = fopen(path, "r");
 
   if (file == NULL) {
     printf("Coudn't read file\n");
     return;
   }
-
-  while ((error = read_line(&line, file)) != -1) {
-  }
-
-  if (file != NULL)
-    fclose(file);
-  free(line);
 }
 
 void interactive_mode() {
